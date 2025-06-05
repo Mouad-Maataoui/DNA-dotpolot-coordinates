@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chargement des fichiers</title>
+</head>
+<body>
+    <h1>Fichiers de coordonnées</h1>
+    <ul id="file-list"></ul>
+
+    <script>
+        function getUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        return{
+            id: params.get('id') || ''
+        };
+        }
+
+        function httpGet(theUrl) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+        }
+        const urlParams = getUrlParams();
+        var t = httpGet('https://bioinfo.univ-lille.fr/yass/tmp/coordonnees.'+ urlParams.id + '.txt');
+        document.write("typeof : "+(typeof t));
+        document.write("<hr>");
+        document.write("length : "+(t.length));
+        document.write("<hr><code>");
+        document.write(t);
+        document.write("</code>");
+    </script>
+</body>
+</html>

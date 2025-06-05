@@ -1,0 +1,271 @@
+/* --------------------------------------------------
+   Variables
+   -------------------------------------------------- */
+:root {
+  --bg-light:      #fafafa;
+  --bg-dark:       #121212;
+  --surface-light: #ffffff;
+  --surface-dark:  #1e1e1e;
+  --text-light:    #1a1a1a;
+  --text-dark:     #e0e0e0;
+  --border-light:  #ddd;
+  --border-dark:   #333;
+  --accent:        #888;
+  --shadow-light:  rgba(0,0,0,0.05);
+  --shadow-dark:   rgba(0,0,0,0.4);
+}
+
+/* --------------------------------------------------
+   Global Styles
+   -------------------------------------------------- */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-light);
+  transition: background 0.3s, color 0.3s;
+}
+body.dark {
+  background: var(--bg-dark);
+  color:      var(--text-dark);
+}
+
+h1 {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+/* --------------------------------------------------
+   Layout: Plot + Controls
+   -------------------------------------------------- */
+.full-container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+@media (max-width: 850px) {
+  .full-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* --------------------------------------------------
+   Shared panel style
+   -------------------------------------------------- */
+.plot-container,
+.controls-container {
+  background: var(--surface-light);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px var(--shadow-light);
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+body.dark .plot-container,
+body.dark .controls-container {
+  background: var(--surface-dark);
+  border-color: var(--border-dark);
+  box-shadow: 0 4px 16px var(--shadow-dark);
+}
+
+
+/* --------------------------------------------------
+   Plot area
+   -------------------------------------------------- */
+.plot-container {
+  flex: 1;
+  max-width: 860px;
+  padding: 2rem;
+}
+
+.plot-container #dotplot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;    /* centre le wrapper et l’axe X */
+}
+
+@media (max-width: 850px) {
+  .plot-container {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* --------------------------------------------------
+   Controls panel
+   -------------------------------------------------- */
+
+#modeControls {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.mode-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* espace entre le radio et le label */
+}
+  
+.controls-container {
+  width: 240px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px  ;
+}
+@media (max-width: 850px) {
+  .controls-container {
+    width: 100%;
+    max-width: 320px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+#controls > * {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* --------------------------------------------------
+   Controls & inputs base style
+   -------------------------------------------------- */
+.controls-container button,
+.controls-container input[type="color"],
+.controls-container input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  font-size: 0.9rem;
+}
+body.dark .controls-container button,
+body.dark .controls-container input[type="color"],
+body.dark .controls-container input[type="text"] {
+  border-color: var(--border-dark);
+}
+.controls-container button:hover,
+.controls-container input[type="color"]:hover,
+.controls-container input[type="text"]:hover,
+.controls-container input[type="text"]:focus {
+  background: var(--accent);
+}
+
+.controls-container button,
+.controls-container input[type="text"] {
+  width: auto;
+  min-width: 8rem; 
+}
+
+.selection-container input[type="text"] {
+  width: 6rem;     
+  min-width: 6rem;
+}
+
+#controls-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  column-gap: 3rem;
+}
+
+/* --------------------------------------------------
+   Selection inputs (Qmin/Qmax/Tmin/Tmax)
+   -------------------------------------------------- */
+.selection-container {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0.5rem 1rem;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.selection-container label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9rem;
+  color: inherit;
+}
+.selection-container input[type="text"] {
+  width: 4rem;
+  padding: 0.25rem;
+  text-align: center;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  background: transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+.selection-container input[type="text"]:hover,
+.selection-container input[type="text"]:focus {
+  border-color: var(--accent);
+  background: rgba(0,0,0,0.05);
+}
+
+.selection-container #applyZoom {
+  /* occuper toute la largeur du grid et centrer son contenu */
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: block;
+  width: auto;
+  margin: 0.75rem auto 0;
+}
+
+/* --------------------------------------------------
+   SVG & Axes
+   -------------------------------------------------- */
+.wrapper {
+  justify-content: center; /* centre les deux enfants (axe-vertical + svg) */
+}
+
+.axis-horizontal {
+  display: block;
+  margin: 0rem auto 0;   /* un petit espace au-dessus, et centré */
+}
+
+svg {
+  background: transparent;
+  overflow: visible;
+}
+.axis-vertical line,
+.axis-horizontal line,
+.tick {
+  stroke: var(--accent);
+}
+.axis-vertical text,
+.axis-horizontal text {
+  fill: var(--text-light);
+  font-size: 0.8rem;
+}
+body.dark .axis-vertical text,
+body.dark .axis-horizontal text {
+  fill: var(--text-dark);
+}
+
+/* --------------------------------------------------
+   Responsive adjustments
+   -------------------------------------------------- */
+@media (max-width: 850px) {
+  .controls-container button,
+  .controls-container input[type="color"],
+  .controls-container input[type="text"] {
+    flex: 1 1 45%;
+    width: auto;
+    margin: 0.25rem 0;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+  }
+}
