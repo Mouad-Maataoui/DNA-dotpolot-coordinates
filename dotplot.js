@@ -33,8 +33,9 @@ function fetchData() {
     document.body.classList.remove('dark');
   }
   
-  //fetch('/yass/tmp/coordonnees.' + urlParams.id +'.txt') // use the local file for testing
-  fetch('coordonnees.txt')
+  
+  //fetch('coordonnees.txt')
+  fetch('/yass/tmp/coordonnees.' + urlParams.id +'.txt') // use the local file for testing
     .then(res => res.text())
     .then(data => {
       const lines = data.split('\n');
