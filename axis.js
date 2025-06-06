@@ -41,7 +41,7 @@ function formatLabel(value, step) {
  * Create and return an SVG element representing the vertical (Y) axis with arrow.
  */
 export function createYAxis(viewBox, plotSize, margin) {
-  // On détermine dynamiquement le target en fonction de la taille réelle du graphe
+  // we determine dynamically the target based on the actual plot size
   const dynamicTarget = plotSize < 300 ? 3 : 8;
   const { step, sections } = computeSections(viewBox.height, { target: dynamicTarget, minSections: 3, maxSections: 11 });
   const maxValueY = viewBox.y + viewBox.height;
@@ -50,7 +50,7 @@ export function createYAxis(viewBox, plotSize, margin) {
   svg.setAttribute('height', plotSize);
   svg.classList.add('axis-vertical');
 
-  // Définition du marker flèche, plus petit et aligné
+  // defines the marker for the arrowhead
   const defs = document.createElementNS(NS, 'svg:defs');
   const marker = document.createElementNS(NS, 'svg:marker');
   marker.setAttribute('id', 'arrowHeadY');
@@ -67,7 +67,7 @@ export function createYAxis(viewBox, plotSize, margin) {
   defs.appendChild(marker);
   svg.appendChild(defs);
 
-  // Axe Y: point de départ
+  // Axe Y: start point
   const startY = document.createElementNS(NS, 'circle');
   startY.setAttribute('cx', margin - 10);
   startY.setAttribute('cy', 0);
@@ -75,7 +75,7 @@ export function createYAxis(viewBox, plotSize, margin) {
   startY.setAttribute('fill', 'var(--axis-text)');
   svg.appendChild(startY);
 
-  // Ligne de l'axe avec flèche
+  // axe Y line with arrow
   const yAxisLine = document.createElementNS(NS, 'line');
   yAxisLine.setAttribute('x1', margin - 10);
   yAxisLine.setAttribute('y1', -1);
@@ -86,7 +86,8 @@ export function createYAxis(viewBox, plotSize, margin) {
   yAxisLine.setAttribute('marker-end', 'url(#arrowHeadY)');
   svg.appendChild(yAxisLine);
 
-  // Ticks et labels : i=1 à sections-1
+  // Ticks and labels 
+  // We start at 1 to avoid the initial tick at 0
   for (let i = 1; i < sections; i++) {
     const rawValue = viewBox.y + i * step;
     if (rawValue >= maxValueY) break;
@@ -117,7 +118,7 @@ export function createYAxis(viewBox, plotSize, margin) {
  * Create and return an SVG element representing the horizontal (X) axis with arrow.
  */
 export function createXAxis(viewBox, plotSize, margin) {
-  // On détermine dynamiquement le target en fonction de la taille réelle du graphe
+  // we determine dynamically the target based on the actual plot size
   const dynamicTarget = plotSize < 300 ? 3 : 8;
   const { step, sections } = computeSections(viewBox.width, { target: dynamicTarget, minSections: 3, maxSections: 11 });
   const maxValueX = viewBox.x + viewBox.width;
@@ -126,7 +127,7 @@ export function createXAxis(viewBox, plotSize, margin) {
   svg.setAttribute('height', margin);
   svg.classList.add('axis-horizontal');
 
-  // Définition du marker flèche, plus petit et aligné
+  // defines the marker for the arrowhead
   const defs = document.createElementNS(NS, 'svg:defs');
   const marker = document.createElementNS(NS, 'svg:marker');
   marker.setAttribute('id', 'arrowHeadX');
@@ -143,7 +144,7 @@ export function createXAxis(viewBox, plotSize, margin) {
   defs.appendChild(marker);
   svg.appendChild(defs);
 
-  // Axe X: point de départ
+  // Axe X: start point
   const startX = document.createElementNS(NS, 'circle');
   startX.setAttribute('cx', margin + 0);
   startX.setAttribute('cy', 10);
@@ -151,7 +152,7 @@ export function createXAxis(viewBox, plotSize, margin) {
   startX.setAttribute('fill', 'var(--axis-text)');
   svg.appendChild(startX);
 
-  // Ligne de l'axe avec flèche
+  // axe X line
   const xAxisLine = document.createElementNS(NS, 'line');
   xAxisLine.setAttribute('x1', margin + 0);
   xAxisLine.setAttribute('y1', 10);
@@ -162,7 +163,8 @@ export function createXAxis(viewBox, plotSize, margin) {
   xAxisLine.setAttribute('marker-end', 'url(#arrowHeadX)');
   svg.appendChild(xAxisLine);
 
-  // Ticks et labels : i=1 à sections-1
+  // Ticks and labels 
+  // We start at 1 to avoid the initial tick at 0
   for (let i = 1; i < sections; i++) {
     const rawValue = viewBox.x + i * step;
     if (rawValue >= maxValueX) break;

@@ -64,14 +64,14 @@ export function handlePointerEnd(e) {
   selection = null;
 }
 
-// Configuration unifiée pour souris et tactile
+// configures unified event listeners for both mouse and touch events
 export function setupUnifiedEvents(svgElement) {
-  // Événements souris
+  // mouse events
   svgElement.addEventListener('mousedown', handlePointerStart);
   svgElement.addEventListener('mousemove', handlePointerMove);
   svgElement.addEventListener('mouseup', handlePointerEnd);
   
-  // Événements tactiles
+  // touch events
   svgElement.addEventListener('touchstart', handlePointerStart, { passive: false });
   svgElement.addEventListener('touchmove', handlePointerMove, { passive: false });
   svgElement.addEventListener('touchend', handlePointerEnd, { passive: false });

@@ -107,7 +107,7 @@ body.dark .controls-container {
 .mode-option {
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* espace entre le radio et le label */
+    gap: 0.5rem; /* space between the label and radio button*/
 }
   
 .controls-container {
@@ -214,7 +214,7 @@ body.dark .controls-container input[type="text"] {
 }
 
 .selection-container #applyZoom {
-  /* occuper toute la largeur du grid et centrer son contenu */
+  /* center content and occupies the whole space*/
   grid-column: 1 / -1;
   justify-self: center;
   display: block;
@@ -226,12 +226,12 @@ body.dark .controls-container input[type="text"] {
    SVG & Axes
    -------------------------------------------------- */
 .wrapper {
-  justify-content: center; /* centre les deux enfants (axe-vertical + svg) */
+  justify-content: center; /* centers the div's children (axe-vertical + svg) */
 }
 
 .axis-horizontal {
   display: block;
-  margin: 0rem auto 0;   /* un petit espace au-dessus, et centré */
+  margin: 0rem auto 0;  
 }
 
 svg {

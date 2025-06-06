@@ -3,7 +3,7 @@ import { setupControls, resetZoom } from './tools.js';
 import { exportToSvg } from './export.js';
 import { getUrlParams, updateUrlParams, setupUrlSync } from './url.js';
 import { makeLine, clickableLine } from './lines.js';
-import { setupUnifiedEvents } from './handleTouchScreen&Mouse.js';
+import { setupUnifiedEvents } from './handleTouchScreen_Mouse.js';
 
 
 // declaring variables to store the points and the original viewBox (without zoom)
@@ -33,13 +33,12 @@ function fetchData() {
     document.body.classList.remove('dark');
   }
   
-  fetch('/yass/tmp/coordonnees.' + urlParams.id +'.txt') // use the local file for testing
+  //fetch('/yass/tmp/coordonnees.' + urlParams.id +'.txt') // use the local file for testing
+  fetch('coordonnees.txt')
     .then(res => res.text())
     .then(data => {
       const lines = data.split('\n');
       let maxX = 0, maxY = 0;
-      // array to store the points
-      points = [];
       const lineDictionary = {}; // dictionary to store unique lines with their IDs
       let currentId = 1; // unique id for each set of points
 
@@ -86,6 +85,7 @@ function fetchData() {
 // function to render the dotplot
 // this function creates the SVG elements and appends them to the DOM
 export function render() {
+  let currPoints = []; // points to be displayed in the current viewBox
   const container = document.getElementById('dotplot');
   container.innerHTML = '';
   // Layout constants
@@ -120,61 +120,100 @@ export function render() {
   svg.style.border = '1px solid black';
   svg.setAttribute('pointer-events', 'all'); // allow clicks on the svg (for clickable areas)
 
-  // define ClipPath to hide the potential lines that could be printed outside the viewBox
-  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-  const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-  clipPath.setAttribute('id', 'plotClip');
-  const clipRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  clipRect.setAttribute('x', viewBox.x);
-  clipRect.setAttribute('y', viewBox.y);
-  clipRect.setAttribute('width', viewBox.width);
-  clipRect.setAttribute('height', viewBox.height);
-  clipPath.appendChild(clipRect);
-  defs.appendChild(clipPath);
-  svg.appendChild(defs);
-
-  // groups points, lines and clipPath together
+  // groups points and lines together
   const plotGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  plotGroup.setAttribute('clip-path', 'url(#plotClip)');
 
-  // calculate the radius of the circles based on the zoom factor
-  const zoomFactor = Math.max(viewBox.width / initialViewBox.width, viewBox.height / initialViewBox.height);
-  const radius = Math.max(2, 5000 * zoomFactor);
 
-  // filter points based on the current viewBox, display points if any part of the segment is visible (sécante)
-  points.filter(point => {
-    const xMin = viewBox.x;
-    const xMax = viewBox.x + viewBox.width;
-    const yMin = viewBox.y;
-    const yMax = viewBox.y + viewBox.height;
+  if (initialViewBox.width === viewBox.width && initialViewBox.height === viewBox.height) {
+    currPoints = [...points]; // Reset currPoints to include all points
+  } else {
+    currPoints = points.map(point => {
+      const xMin = viewBox.x;
+      const xMax = viewBox.x + viewBox.width;
+      const yMin = viewBox.y;
+      const yMax = viewBox.y + viewBox.height;
 
-    // check if the segment crosses the box
-    // Check for trivial rejection: both points on same outside side
-    if ((point.x1 < xMin && point.x2 < xMin) || (point.x1 > xMax && point.x2 > xMax) ||
-        (point.y1 < yMin && point.y2 < yMin) || (point.y1 > yMax && point.y2 > yMax)) {
-      return false;
-    }
-    // Otherwise, the segment must cross the box
-    return true;
-  }).forEach(point => { 
+      // Toujours créer une copie pour ne jamais modifier l'original
+      const { x1, x2, y1, y2, direction } = point;
+      let clippedPoint = { ...point };
+
+      if (x1 !== 0 && x2 !== 0 && x2 - x1 !== 0 && y2 - y1 !== 0) {
+        const slope = (y2 - y1) / (x2 - x1);
+
+        if (direction === 'f' && x2 > xMin && x1 < xMax && y2 > yMin && y1 < yMax) {
+          if (x1 < xMin) {
+            clippedPoint.x1 = xMin;
+            clippedPoint.y1 = y2 - ((x2 - xMin) * slope);
+          }
+          if (clippedPoint.y1 < yMin) {
+            clippedPoint.y1 = yMin;
+            clippedPoint.x1 = x2 - ((y2 - yMin) / slope);
+          }
+          if (x2 > xMax) {
+            clippedPoint.x2 = xMax;
+            clippedPoint.y2 = clippedPoint.y1 + ((xMax - clippedPoint.x1) * slope);
+          }
+          if (clippedPoint.y2 > yMax) {
+            clippedPoint.y2 = yMax;
+            clippedPoint.x2 = clippedPoint.x1 + ((yMax - clippedPoint.y1) / slope);
+          }
+
+          return clippedPoint.x1 >= xMin && clippedPoint.x2 <= xMax && 
+                clippedPoint.y1 >= yMin && clippedPoint.y2 <= yMax && 
+                clippedPoint.x1 < clippedPoint.x2 && clippedPoint.y1 < clippedPoint.y2 ? clippedPoint : null;
+                
+        } else if (direction === 'r' && x1 > xMin && x2 < xMax && y2 > yMin && y1 < yMax) {
+          if (x1 > xMax) {
+            clippedPoint.x1 = xMax;
+            clippedPoint.y1 = y2 - ((x2 - xMax) * slope);
+          }
+          if (clippedPoint.y1 < yMin) {
+            clippedPoint.y1 = yMin;
+            clippedPoint.x1 = x2 - ((y2 - yMin) / slope);
+          }
+          if (x2 < xMin) {
+            clippedPoint.x2 = xMin;
+            clippedPoint.y2 = clippedPoint.y1 + ((xMin - clippedPoint.x1) * slope);
+          }
+          if (clippedPoint.y2 > yMax) {
+            clippedPoint.y2 = yMax;
+            clippedPoint.x2 = clippedPoint.x1 + ((yMax - clippedPoint.y1) / slope);
+          }
+
+          return clippedPoint.x2 >= xMin && clippedPoint.x1 <= xMax && 
+                clippedPoint.y1 >= yMin && clippedPoint.y2 <= yMax && 
+                clippedPoint.x2 < clippedPoint.x1 && clippedPoint.y1 < clippedPoint.y2 ? clippedPoint : null;
+        }
+      }
+      return null;
+    }).filter(point => point !== null);
+  }
+
+  currPoints.forEach(point => { 
     const { x1, x2, y1, y2, direction, id } = point;
     if (initialViewBox.width === viewBox.width && initialViewBox.height === viewBox.height) {
-      if (!(id % urlParams.factor === 0) && !(id === 1) ){
+      // Always include the point with id 1
+      if (id === 1) {
+    } else if (initialViewBox.width === viewBox.width && initialViewBox.height === viewBox.height) {
+      if (urlParams.alignments && id > urlParams.alignments) {
         return;
       }
     }
-    // checks if the viewBox is the initial one and if the id is less than 2000 (we only make the clickable area for the first 2000 lines)
-    if(viewBox.width === initialViewBox.width && viewBox.height === initialViewBox.height && id < 2000){ 
-      const clickableLineConst = clickableLine(1000,100000,x1, y1, x2, y2,id); // create a clickable line with a large stroke width
-      plotGroup.appendChild(clickableLineConst);
     }
-    else {
-      if (x1 !== x2 || y1 !== y2) { // verifiy that the lines are valid
-        const dynamicStrokeWidth = 1000 * (viewBox.width / initialViewBox.width) + 200;
-        const clickableLineConst = clickableLine(2, dynamicStrokeWidth,x1, y1, x2, y2,id);
+    else{
+      // checks if the viewBox is the initial one and if the id is less than 2000 (we only make the clickable area for the first 2000 lines)
+      if(viewBox.width === initialViewBox.width && viewBox.height === initialViewBox.height && id < 2000){ 
+        const clickableLineConst = clickableLine(1000,100000,x1, y1, x2, y2,id); // create a clickable line with a large stroke width
         plotGroup.appendChild(clickableLineConst);
       }
-    }
+      else {
+        if (x1 !== x2 || y1 !== y2) { // verifiy that the lines are valid
+          const dynamicStrokeWidth = 1000 * (viewBox.width / initialViewBox.width) + 200;
+          const clickableLineConst = clickableLine(2, dynamicStrokeWidth,x1, y1, x2, y2,id);
+          plotGroup.appendChild(clickableLineConst);
+        }
+      }
+  }
 
     // add the real line with the dynamic stroke width
     const line = makeLine(x1, y1, x2, y2, direction === 'f' ? colors.f : colors.r);
@@ -221,6 +260,7 @@ export function onMap() {
 //allows to modify the viewBox from outside the module
 export function setViewBox(newViewBox) {
   viewBox = { ...newViewBox };
+  render();
 }
 
 //traduce screen coordinates to SVG coordinates

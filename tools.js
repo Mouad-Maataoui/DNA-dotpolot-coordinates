@@ -12,7 +12,6 @@ export function toggleTheme() {
 export function resetZoom() {
   if (initialViewBox) {
     setViewBox(initialViewBox);
-    render();
   }
 }
 
@@ -42,8 +41,8 @@ export function setupControls(onResetZoom, onColorChange, renderFn, onZoom, onMa
     .addEventListener('click', exportToSvg);
   document.getElementById('toggleThemeBtn')
     .addEventListener('click', toggleTheme);
-  
-  // Remplacer l'attachement sur les boutons par celui sur les boutons radio
+
+  // replace the button click listeners with radio button change listeners
   document.querySelectorAll('input[name="mode"]').forEach(input => {
     input.addEventListener('change', (e) => {
       if (e.target.value === 'zoom') {

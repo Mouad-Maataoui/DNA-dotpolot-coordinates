@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dotplot</title>
-  <link rel="stylesheet" href="dotplot.css">
+  <link rel="stylesheet" href="style/dotplot.css">
 </head>
 <body class="light">
   <h1>Dotplot</h1>
@@ -16,13 +16,6 @@
 
       <div class="controls-container">
         <div id="controls">
-          <button id="resetZoomBtn">Reset Zoom</button>
-          <button id="exportBtn">Export svg</button>
-          <button id="toggleThemeBtn">Toggle Theme</button>
-          <label>Forward color: <input type="color" id="colorF" value="#008000"></label>
-          <br/>
-          <label>Reverse color: <input type="color" id="colorR" value="#ff0000"></label>
-          <br/>
           <div id="modeControls">
               <div class="mode-option">
                 <input type="radio" name="mode" id="modeZoom" value="zoom" checked>
@@ -33,6 +26,13 @@
                 <label for="modeMap">Map</label>
               </div>
           </div>
+          <button id="resetZoomBtn">Reset Zoom</button>
+          <button id="exportBtn">Export svg</button>
+          <button id="toggleThemeBtn">Toggle Theme</button>
+          <label>Forward color: <input type="color" id="colorF" value="#008000"></label>
+          <br/>
+          <label>Reverse color: <input type="color" id="colorR" value="#ff0000"></label>
+          <br/>
           <div class="selection-container"> 
             <label>Qmin : <input type="text" id="qMin"></label>
             <label>Qmax : <input type="text" id="qMax"></label>

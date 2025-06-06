@@ -35,7 +35,7 @@ export function getUrlParams() {
     colors: colorsParam,
     theme: params.get('theme') || 'light',
     id: params.get('id') || null,
-    factor: params.get('factor') || 1,
+    alignments: params.get('alignments') || null,
     filename1: params.get('filename1') || null,
     filename2: params.get('filename2') || null
   };
@@ -48,7 +48,7 @@ export function updateUrlParams() {
   params.push(`colors=${JSON.stringify(colors)}`);
   params.push(`theme=${document.body.classList.contains('dark') ? 'dark' : 'light'}`);
   params.push(`id=${getUrlParams().id || ''}`);
-  params.push(`factor=${getUrlParams().factor || 1}`);
+  params.push(`alignments=${getUrlParams().alignments || ''}`);
   params.push(`filename1=${getUrlParams().filename1 || ''}`);
   params.push(`filename2=${getUrlParams().filename2 || ''}`);
   window.history.replaceState({}, '', `${window.location.pathname}?${params.join('&')}`);
