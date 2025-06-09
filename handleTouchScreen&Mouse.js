@@ -1,9 +1,13 @@
 import { getSVGCoords, render, rect, setViewBox } from './dotplot.js';
 import { updateSelectionInputs } from './tools.js';
+import {isZoomAllowed} from 'dotplot.js'
 
 let selection = null;
 
 export function handlePointerStart(e) {
+  if (!isZoomAllowed){
+    return;
+  }
   console.log('handlePointerStart', e);
   e.preventDefault();
   

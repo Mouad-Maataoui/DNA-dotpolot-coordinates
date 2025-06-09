@@ -190,7 +190,7 @@ export function render() {
     }).filter(point => point !== null);
   }
 
-  currPoints.forEach(point => { 
+currPoints.forEach(point => { 
     const { x1, x2, y1, y2, direction, id } = point;
     if (initialViewBox.width === viewBox.width && initialViewBox.height === viewBox.height) {
       // Always include the point with id 1
@@ -199,22 +199,20 @@ export function render() {
       if (urlParams.alignments && id > urlParams.alignments) {
         return;
       }
-    }
-    }
-    else{
-      // checks if the viewBox is the initial one and if the id is less than 2000 (we only make the clickable area for the first 2000 lines)
-      if(viewBox.width === initialViewBox.width && viewBox.height === initialViewBox.height && id < 2000){ 
+      else {
         const clickableLineConst = clickableLine(1000,100000,x1, y1, x2, y2,id); // create a clickable line with a large stroke width
         plotGroup.appendChild(clickableLineConst);
       }
-      else {
-        if (x1 !== x2 || y1 !== y2) { // verifiy that the lines are valid
-          const dynamicStrokeWidth = 1000 * (viewBox.width / initialViewBox.width) + 200;
-          const clickableLineConst = clickableLine(2, dynamicStrokeWidth,x1, y1, x2, y2,id);
-          plotGroup.appendChild(clickableLineConst);
+    }
+    }
+    else{
+      if (x1 !== x2 || y1 !== y2) { // verifiy that the lines are valid
+        const dynamicStrokeWidth = 1000 * (viewBox.width / initialViewBox.width) + 200;
+        const clickableLineConst = clickableLine(2, dynamicStrokeWidth,x1, y1, x2, y2,id);
+        plotGroup.appendChild(clickableLineConst);
         }
       }
-  }
+  
 
     // add the real line with the dynamic stroke width
     const line = makeLine(x1, y1, x2, y2, direction === 'f' ? colors.f : colors.r);
