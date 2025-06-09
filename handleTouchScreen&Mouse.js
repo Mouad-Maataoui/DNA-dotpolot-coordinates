@@ -1,6 +1,5 @@
-import { getSVGCoords, render, rect, setViewBox } from './dotplot.js';
+import { getSVGCoords, render, rect, setViewBox,isZoomAllowed } from './dotplot.js';
 import { updateSelectionInputs } from './tools.js';
-import {isZoomAllowed} from 'dotplot.js'
 
 let selection = null;
 
